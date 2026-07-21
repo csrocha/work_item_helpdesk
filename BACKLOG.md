@@ -11,7 +11,19 @@ formato que `insight_project/BACKLOG.md`).
 Propuesta de "nivel profesional superior" para todo el ecosistema. Visión
 completa en la memoria `project_ecosystem_roadmap`.
 
-### 1. Revisar el escape HTML en `_work_item_compose_message`
+### ~~1. Revisar el escape HTML en `_work_item_compose_message`~~ — RESUELTO
+
+Resuelto (2026-07-18): confirmado en un test real (no alcanzaba con leer
+el código) — `Markup('<br/>').join(parts)` en vez de `'<br/>'.join(parts)`,
+mismo patrón que `_post_purchase_confirmed_message` en
+`insight_project_purchase` (memoria `message-post-html-escaping`).
+`Markup.join()` además escapa cada parte individual, lo que de paso cierra
+un XSS real: `intent_note`/`outcome_note` son texto libre del usuario y
+antes se insertaban sin escapar. 2 tests nuevos en
+`tests/test_helpdesk_ticket.py` (no existía carpeta `tests/` en este
+módulo): uno verifica que el resultado es `Markup` con `<br/>` real, otro
+que `<script>` en una nota queda escapado. 2/2 OK (`make test-local
+MODULE=work_item_helpdesk`).
 
 Confirmado por auditoría de código (2026-07-13):
 `models/helpdesk_ticket.py:41` `_work_item_compose_message` arma el body

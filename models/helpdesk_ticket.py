@@ -80,6 +80,7 @@ class HelpdeskTicket(models.Model):
             'name': t.name,
             'icon': '🎫',
             'css_class': 'text-danger' if int(t.priority or 0) >= 2 else '',
+            'priority': t.priority,
         } for t in tickets]
 
     def action_switch_to_session(self):

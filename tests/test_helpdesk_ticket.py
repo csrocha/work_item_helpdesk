@@ -30,3 +30,16 @@ class TestHelpdeskTicketComposeMessage(TransactionCase):
         )
         self.assertNotIn('<script>', body)
         self.assertIn('&lt;script&gt;', body)
+
+
+class TestHelpdeskTicketWorkItemCandidates(TransactionCase):
+    """BACKLOG.md (work_item_systray) ítem 2.4: _get_switchable_work_items
+    ordena por prioridad usando la clave 'priority' de cada candidato --
+    faltaba en helpdesk.ticket."""
+
+    def test_candidate_carries_priority(self):
+        ticket = self.env['helpdesk.ticket'].create({
+            'name': 'Test ticket', 'user_id': self.env.uid, 'priority': '2',
+        })
+        by_id = {c['res_id']: c for c in self.env['helpdesk.ticket']._work_item_candidates()}
+        self.assertEqual(by_id[ticket.id]['priority'], '2')
